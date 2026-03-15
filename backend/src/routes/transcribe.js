@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import ffmpeg from 'fluent-ffmpeg';
 import { createRequire } from 'module';
 import { AssemblyAI } from 'assemblyai';
+import youtubeDl from 'youtube-dl-exec';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -47,22 +48,41 @@ function extractAudio(inputPath, outputPath) {
   });
 }
 
+async function transcribeAudioFile(audioPath) {
+  const transcript = await getAssemblyAI().transcripts.transcribe({
+    audio: audioPath,
+    speech_models: ['universal-2'],
+  });
+  if (transcript.status === 'error') throw new Error(transcript.error);
+  return transcript.text;
+}
+
 // ── POST /api/transcribe/url ───────────────────────────────────────────────────
-// Pass the URL directly to AssemblyAI — no yt-dlp or local download needed.
+// Download audio via youtube-dl-exec (handles TikTok, YouTube, etc.)
+// then send the audio file to AssemblyAI for transcription.
 router.post('/transcribe/url', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL is required.' });
 
+  const audioPath = path.join(os.tmpdir(), `scriptit-url-${Date.now()}.mp3`);
+
   try {
-    const transcript = await getAssemblyAI().transcripts.transcribe({
-      audio_url: url,
-      speech_models: ['universal-2'],
+    await youtubeDl(url, {
+      noPlaylist: true,
+      extractAudio: true,
+      audioFormat: 'mp3',
+      audioQuality: 0,
+      output: audioPath,
+      ffmpegLocation: path.dirname(ffmpegPath),
     });
-    if (transcript.status === 'error') throw new Error(transcript.error);
-    res.json({ transcript: transcript.text });
+
+    const transcript = await transcribeAudioFile(audioPath);
+    res.json({ transcript });
   } catch (err) {
     console.error('URL transcription error:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
+  } finally {
+    fs.unlink(audioPath, () => {});
   }
 });
 
@@ -75,12 +95,8 @@ router.post('/transcribe/file', upload.single('video'), async (req, res) => {
 
   try {
     await extractAudio(uploadedPath, audioPath);
-    const transcript = await getAssemblyAI().transcripts.transcribe({
-      audio: audioPath,
-      speech_models: ['universal-2'],
-    });
-    if (transcript.status === 'error') throw new Error(transcript.error);
-    res.json({ transcript: transcript.text });
+    const transcript = await transcribeAudioFile(audioPath);
+    res.json({ transcript });
   } catch (err) {
     console.error('File transcription error:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
