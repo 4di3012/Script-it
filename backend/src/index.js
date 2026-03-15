@@ -9,24 +9,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.FRONTEND_URL,
-].filter(Boolean);
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+}));
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(express.json());
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
 app.use('/api', generateRoute);
 app.use('/api', transcribeRoute);
