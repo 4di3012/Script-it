@@ -6,6 +6,9 @@ import transcribeRoute from './routes/transcribe.js';
 
 dotenv.config();
 
+const assemblyKey = process.env.ASSEMBLYAI_API_KEY;
+console.log(`ASSEMBLYAI_API_KEY: ${assemblyKey ? assemblyKey.slice(0, 8) + '...' : 'NOT SET'}`);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 

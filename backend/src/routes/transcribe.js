@@ -56,11 +56,16 @@ function extractAudio(inputPath, outputPath) {
 }
 
 async function transcribeAudioFile(audioPath) {
+  const key = process.env.ASSEMBLYAI_API_KEY;
+  console.log(`AssemblyAI key in use: ${key ? key.slice(0, 8) + '...' : 'NOT SET'}`);
   const transcript = await getAssemblyAI().transcripts.transcribe({
     audio: audioPath,
     speech_models: ['universal-2'],
   });
-  if (transcript.status === 'error') throw new Error(transcript.error);
+  if (transcript.status === 'error') {
+    console.error('AssemblyAI transcript error:', transcript.error);
+    throw new Error(transcript.error);
+  }
   return transcript.text;
 }
 
@@ -96,7 +101,7 @@ router.post('/transcribe/file', upload.single('video'), async (req, res) => {
     const transcript = await transcribeAudioFile(audioPath);
     res.json({ transcript });
   } catch (err) {
-    console.error('File transcription error:', err);
+    console.error('File transcription error:', err?.message, err?.status, err?.response?.data);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
   } finally {
     fs.unlink(uploadedPath, () => {});
