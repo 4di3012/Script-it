@@ -56,7 +56,7 @@ router.post('/transcribe/url', async (req, res) => {
   try {
     const transcript = await getAssemblyAI().transcripts.transcribe({
       audio_url: url,
-      speech_models: ['nano'],
+      speech_models: ['universal-2'],
     });
     if (transcript.status === 'error') throw new Error(transcript.error);
     res.json({ transcript: transcript.text });
@@ -77,7 +77,7 @@ router.post('/transcribe/file', upload.single('video'), async (req, res) => {
     await extractAudio(uploadedPath, audioPath);
     const transcript = await getAssemblyAI().transcripts.transcribe({
       audio: audioPath,
-      speech_models: ['nano'],
+      speech_models: ['universal-2'],
     });
     if (transcript.status === 'error') throw new Error(transcript.error);
     res.json({ transcript: transcript.text });
