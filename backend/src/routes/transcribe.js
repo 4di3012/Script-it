@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { fileURLToPath } from 'url';
 import ffmpeg from 'fluent-ffmpeg';
 import { createRequire } from 'module';
 import { AssemblyAI } from 'assemblyai';
-import youtubeDl from 'youtube-dl-exec';
+import { YoutubeTranscript } from 'youtube-transcript';
+import { Supadata } from '@supadata/js';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -16,14 +16,22 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const router = Router();
 
-// Lazy: AssemblyAI client is created on first request so dotenv has run by then
+// ── Lazy clients ───────────────────────────────────────────────────────────────
+
 let assemblyai = null;
 function getAssemblyAI() {
   if (!assemblyai) assemblyai = new AssemblyAI({ apiKey: process.env.ASSEMBLYAI_API_KEY });
   return assemblyai;
 }
 
-// Multer: disk storage so large video files don't blow up memory
+let supadata = null;
+function getSupadata() {
+  if (!supadata) supadata = new Supadata({ apiKey: process.env.SUPADATA_API_KEY });
+  return supadata;
+}
+
+// ── Multer setup ───────────────────────────────────────────────────────────────
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, os.tmpdir()),
@@ -33,7 +41,15 @@ const upload = multer({
   limits: { fileSize: 500 * 1024 * 1024 }, // 500 MB
 });
 
-// ── Shared helpers ─────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function isYouTubeUrl(url) {
+  return /youtube\.com|youtu\.be/.test(url);
+}
+
+function isTikTokUrl(url) {
+  return /tiktok\.com/.test(url);
+}
 
 function extractAudio(inputPath, outputPath) {
   return new Promise((resolve, reject) => {
@@ -58,35 +74,37 @@ async function transcribeAudioFile(audioPath) {
 }
 
 // ── POST /api/transcribe/url ───────────────────────────────────────────────────
-// Download audio via youtube-dl-exec (handles TikTok, YouTube, etc.)
-// then send the audio file to AssemblyAI for transcription.
+
 router.post('/transcribe/url', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL is required.' });
 
-  const audioPath = path.join(os.tmpdir(), `scriptit-url-${Date.now()}.mp3`);
-
   try {
-    await youtubeDl(url, {
-      noPlaylist: true,
-      extractAudio: true,
-      audioFormat: 'mp3',
-      audioQuality: 0,
-      output: audioPath,
-      ffmpegLocation: path.dirname(ffmpegPath),
-    });
+    if (isYouTubeUrl(url)) {
+      // Fetch captions directly from YouTube — no download, no Python
+      const segments = await YoutubeTranscript.fetchTranscript(url);
+      const transcript = segments.map((s) => s.text).join(' ');
+      return res.json({ transcript });
+    }
 
-    const transcript = await transcribeAudioFile(audioPath);
-    res.json({ transcript });
+    if (isTikTokUrl(url)) {
+      // Use Supadata to get TikTok transcript — no download, no Python
+      const result = await getSupadata().transcript({ url, text: true });
+      const transcript = typeof result.content === 'string'
+        ? result.content
+        : result.content.map((s) => s.text).join(' ');
+      return res.json({ transcript });
+    }
+
+    return res.status(400).json({ error: 'Only YouTube and TikTok URLs are supported.' });
   } catch (err) {
     console.error('URL transcription error:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
-  } finally {
-    fs.unlink(audioPath, () => {});
   }
 });
 
 // ── POST /api/transcribe/file ──────────────────────────────────────────────────
+
 router.post('/transcribe/file', upload.single('video'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
 
