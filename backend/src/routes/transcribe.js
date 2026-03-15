@@ -1,23 +1,17 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import ffmpeg from 'fluent-ffmpeg';
+import { createRequire } from 'module';
 import { AssemblyAI } from 'assemblyai';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-// CJS packages need createRequire in an ESM context
 const require = createRequire(import.meta.url);
-const ffmpegPath = require('ffmpeg-static');      // returns the .exe path on Windows
-const YTDlpWrap = require('yt-dlp-wrap').default;
+const ffmpegPath = require('ffmpeg-static');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BIN_EXT = process.platform === 'win32' ? '.exe' : '';
-const BIN_PATH = path.join(__dirname, '../../bin', `yt-dlp${BIN_EXT}`);
 
 const router = Router();
 
@@ -38,22 +32,6 @@ const upload = multer({
   limits: { fileSize: 500 * 1024 * 1024 }, // 500 MB
 });
 
-// ── Lazy-load yt-dlp, downloading the binary on first use ─────────────────────
-let ytDlp = null;
-
-async function getYtDlp() {
-  if (ytDlp) return ytDlp;
-
-  if (!fs.existsSync(BIN_PATH)) {
-    console.log('Downloading yt-dlp binary (first run only)…');
-    await YTDlpWrap.downloadFromGithub(BIN_PATH);
-    console.log('yt-dlp ready.');
-  }
-
-  ytDlp = new YTDlpWrap(BIN_PATH);
-  return ytDlp;
-}
-
 // ── Shared helpers ─────────────────────────────────────────────────────────────
 
 function extractAudio(inputPath, outputPath) {
@@ -69,41 +47,22 @@ function extractAudio(inputPath, outputPath) {
   });
 }
 
-async function transcribeWithAssemblyAI(audioPath) {
-  const transcript = await getAssemblyAI().transcripts.transcribe({
-    audio: audioPath,
-    speech_models: ['universal'],
-  });
-  if (transcript.status === 'error') throw new Error(transcript.error);
-  return transcript.text;
-}
-
 // ── POST /api/transcribe/url ───────────────────────────────────────────────────
+// Pass the URL directly to AssemblyAI — no yt-dlp or local download needed.
 router.post('/transcribe/url', async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'URL is required.' });
 
-  const audioPath = path.join(os.tmpdir(), `scriptit-url-${Date.now()}.mp3`);
-
   try {
-    const yt = await getYtDlp();
-
-    // Download audio-only and convert to mp3 using bundled ffmpeg
-    await yt.execPromise([
-      url,
-      '--no-playlist',
-      '-x', '--audio-format', 'mp3',
-      '--ffmpeg-location', path.dirname(ffmpegPath),
-      '-o', audioPath,
-    ]);
-
-    const transcript = await transcribeWithAssemblyAI(audioPath);
-    res.json({ transcript });
+    const transcript = await getAssemblyAI().transcripts.transcribe({
+      audio_url: url,
+      speech_model: 'universal',
+    });
+    if (transcript.status === 'error') throw new Error(transcript.error);
+    res.json({ transcript: transcript.text });
   } catch (err) {
     console.error('URL transcription error:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
-  } finally {
-    fs.unlink(audioPath, () => {});
   }
 });
 
@@ -116,8 +75,12 @@ router.post('/transcribe/file', upload.single('video'), async (req, res) => {
 
   try {
     await extractAudio(uploadedPath, audioPath);
-    const transcript = await transcribeWithAssemblyAI(audioPath);
-    res.json({ transcript });
+    const transcript = await getAssemblyAI().transcripts.transcribe({
+      audio: audioPath,
+      speech_model: 'universal',
+    });
+    if (transcript.status === 'error') throw new Error(transcript.error);
+    res.json({ transcript: transcript.text });
   } catch (err) {
     console.error('File transcription error:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
