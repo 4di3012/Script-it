@@ -14,7 +14,18 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
-app.use(cors({ origin: allowedOrigins }));
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 app.use('/api', generateRoute);
