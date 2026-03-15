@@ -3,7 +3,6 @@ import multer from 'multer';
 import ffmpeg from 'fluent-ffmpeg';
 import { createRequire } from 'module';
 import { AssemblyAI } from 'assemblyai';
-import { YoutubeTranscript } from 'youtube-transcript';
 import { Supadata } from '@supadata/js';
 import fs from 'fs';
 import path from 'path';
@@ -43,14 +42,6 @@ const upload = multer({
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function isYouTubeUrl(url) {
-  return /youtube\.com|youtu\.be/.test(url);
-}
-
-function isTikTokUrl(url) {
-  return /tiktok\.com/.test(url);
-}
-
 function extractAudio(inputPath, outputPath) {
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
@@ -80,23 +71,12 @@ router.post('/transcribe/url', async (req, res) => {
   if (!url) return res.status(400).json({ error: 'URL is required.' });
 
   try {
-    if (isYouTubeUrl(url)) {
-      // Fetch captions directly from YouTube — no download, no Python
-      const segments = await YoutubeTranscript.fetchTranscript(url);
-      const transcript = segments.map((s) => s.text).join(' ');
-      return res.json({ transcript });
-    }
-
-    if (isTikTokUrl(url)) {
-      // Use Supadata to get TikTok transcript — no download, no Python
-      const result = await getSupadata().transcript({ url, text: true });
-      const transcript = typeof result.content === 'string'
-        ? result.content
-        : result.content.map((s) => s.text).join(' ');
-      return res.json({ transcript });
-    }
-
-    return res.status(400).json({ error: 'Only YouTube and TikTok URLs are supported.' });
+    // Supadata handles YouTube and TikTok natively — no download, no Python
+    const result = await getSupadata().transcript({ url, text: true });
+    const transcript = typeof result.content === 'string'
+      ? result.content
+      : result.content.map((s) => s.text).join(' ');
+    return res.json({ transcript });
   } catch (err) {
     console.error('URL transcription error:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
