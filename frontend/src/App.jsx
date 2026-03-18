@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { flushSync } from 'react-dom';
 import InputForm from './components/InputForm.jsx';
 import OutputPanel from './components/OutputPanel.jsx';
-import ScriptHistory from './components/ScriptHistory.jsx';
+// import ScriptHistory from './components/ScriptHistory.jsx';
 import { supabase } from './lib/supabase.js';
 
 const INITIAL_VALUES = {
@@ -176,12 +176,12 @@ export default function App() {
       </main>
 
       {/* History — full width below the grid */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      {/* <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <ScriptHistory
           refreshTrigger={historySaveCount}
           onLoad={handleLoadHistory}
         />
-      </div>
+      </div> */}
 
       {/* Responsive styles */}
       <style>{`
