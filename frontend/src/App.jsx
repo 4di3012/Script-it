@@ -117,15 +117,22 @@ export default function App() {
           gap: '12px',
         }}
       >
-        <div
-          style={{
-            width: '28px',
-            height: '28px',
-            background: 'linear-gradient(135deg, #7c6bff, #a78bfa)',
-            borderRadius: '6px',
-            flexShrink: 0,
-          }}
-        />
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 28 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ flexShrink: 0 }}
+        >
+          {/* Open book */}
+          <path d="M4 20V9C4 9 9 7.5 14 9C19 7.5 24 9 24 9V20C19 18.5 14 20 14 20C14 20 9 18.5 4 20Z" stroke="#a78bfa" strokeWidth="1.5" strokeLinejoin="round" fill="#1a1530"/>
+          <line x1="14" y1="9" x2="14" y2="20" stroke="#a78bfa" strokeWidth="1.5"/>
+          {/* Feather quill */}
+          <path d="M20 5C20 5 23 7 22 11C21 14 17 15.5 15.5 14.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+          <path d="M20 5C18 7 16 10 15.5 14.5" stroke="#a78bfa" strokeWidth="1" strokeLinecap="round"/>
+          <line x1="15.5" y1="14.5" x2="14.5" y2="17" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+        </svg>
         <h1 style={{ fontSize: '18px', fontWeight: '700', color: '#f0f0f0' }}>
           Script It
         </h1>
