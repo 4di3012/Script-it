@@ -16,10 +16,12 @@ router.post('/feedback', async (req, res) => {
     return res.status(400).json({ error: 'rating and script are required.' });
   }
 
+  const cleanedScript = script.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
   const { error } = await getSupabase().from('script_feedback').insert({
     script_id: String(scriptId),
     rating,
-    script,
+    script: cleanedScript,
     creator_voice: creatorVoice || null,
     feedback_note: feedbackNote || null,
     additional_feedback: additionalFeedback || null,

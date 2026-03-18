@@ -33,7 +33,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
       await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, additionalFeedback: note }),
+        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, feedbackNote, additionalFeedback: note }),
       });
     } catch { /* silent fail */ }
   };
