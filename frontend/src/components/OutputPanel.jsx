@@ -8,9 +8,8 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   const [feedbackNote, setFeedbackNote] = useState('');
   const [showAdditionalFeedback, setShowAdditionalFeedback] = useState(false);
   const [additionalFeedback, setAdditionalFeedback] = useState('');
-  const [additionalSubmitted, setAdditionalSubmitted] = useState(false);
 
-  useEffect(() => { setRating(0); setSubmitted(false); setFeedbackNote(''); setShowAdditionalFeedback(false); setAdditionalFeedback(''); setAdditionalSubmitted(false); }, [script]);
+  useEffect(() => { setRating(0); setSubmitted(false); setFeedbackNote(''); setShowAdditionalFeedback(false); setAdditionalFeedback(''); }, [script]);
 
   const handleRating = async (stars) => {
     setRating(stars);
@@ -27,12 +26,14 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   };
 
   const handleSubmitAdditional = async () => {
-    setAdditionalSubmitted(true);
+    const note = additionalFeedback;
+    setAdditionalFeedback('');
+    setShowAdditionalFeedback(false);
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, additionalFeedback }),
+        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, additionalFeedback: note }),
       });
     } catch { /* silent fail */ }
   };
@@ -203,7 +204,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
               <span style={{ fontSize: '12px', color: '#4ade80' }}>
                 Thanks! We'll use this to improve future scripts.
               </span>
-              {!showAdditionalFeedback && !additionalSubmitted && (
+              {!showAdditionalFeedback && (
                 <button
                   onClick={() => setShowAdditionalFeedback(true)}
                   style={{
@@ -219,7 +220,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                   Add More Feedback
                 </button>
               )}
-              {showAdditionalFeedback && !additionalSubmitted && (
+              {showAdditionalFeedback && (
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
                   <textarea
                     value={additionalFeedback}
@@ -254,9 +255,6 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                     Submit
                   </button>
                 </div>
-              )}
-              {additionalSubmitted && (
-                <span style={{ fontSize: '12px', color: '#666' }}>Feedback saved.</span>
               )}
             </>
           ) : (
