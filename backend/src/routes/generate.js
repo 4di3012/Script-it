@@ -98,7 +98,9 @@ Rules:
 - Hook always has exactly 1 talking point — the single opening line that grabs attention
 - Intro, Body, and Close talking points are determined naturally by analyzing the reference script — do not force a set number
 - Let the reference script dictate how many talking points each section needs — if the reference has a long body with 4 beats, match that, if it has a short intro with 1 beat, match that
-- Every talking point must have a specific visual recommendation based on what works in winning UGC ads (e.g. "Direct to camera, hold product up", "B-roll of morning routine", "Close up of product label", "Lean in slightly for CTA")
+- Every talking point must have a visual recommendation using ONLY these shot types: "Direct to camera" (talking head moments), "Product shot" (show the product), "B-roll — [general vibe]" (lifestyle/context, e.g. "B-roll — morning routine"), "Label shot" (close up of product label/ingredients), "Lifestyle shot — [general context]" (lifestyle relevant to the product)
+- Visual recommendations must be generic shot directions — never describe specific physical actions (no "closes eyes", "tucks hair", "lifts mug"), never direct facial expressions
+- Keep visuals to 5 words max
 - Talking points are the actual words the creator says, natural and conversational
 - Never force content into a section just to fill it — if the script flows naturally from hook straight into body, the intro can have just 1 talking point`;
 }
