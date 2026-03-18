@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import ReferenceScriptInput from './ReferenceScriptInput.jsx';
 
 const FIELD_STYLES = {
@@ -36,10 +35,6 @@ function Field({ label, hint, children }) {
 export default function InputForm({ values, onChange, onSubmit, isLoading }) {
   const handleChange = (key) => (e) => onChange(key, e.target.value);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('creatorVoice');
-    if (saved && !values.creatorVoice) onChange('creatorVoice', saved);
-  }, []);
 
   const { creatorVoice: _cv, ...requiredValues } = values;
   const canSubmit = Object.values(requiredValues).every((v) => v.trim()) && !isLoading;
@@ -109,7 +104,7 @@ export default function InputForm({ values, onChange, onSubmit, isLoading }) {
       <Field label="Your Creator Voice (optional)" hint="Describe how you talk on camera so the script sounds like you.">
         <textarea
           value={values.creatorVoice}
-          onChange={(e) => { onChange('creatorVoice', e.target.value); localStorage.setItem('creatorVoice', e.target.value); }}
+          onChange={handleChange('creatorVoice')}
           placeholder="e.g. I'm a 22 year old gym bro, I keep it hype and real, I curse a little, I talk like I'm telling my friend not selling a product"
           rows={3}
           style={FIELD_STYLES}
