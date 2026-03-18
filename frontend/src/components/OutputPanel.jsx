@@ -71,7 +71,11 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
 
   let parsedScript = null;
   if (script && !isLoading) {
-    try { parsedScript = JSON.parse(script); } catch { /* fall through to plain text */ }
+    try {
+      const cleanScript = script.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(cleanScript);
+      parsedScript = parsed;
+    } catch { /* fall through to plain text */ }
   }
 
   const SECTIONS = [
