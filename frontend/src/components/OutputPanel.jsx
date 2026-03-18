@@ -19,7 +19,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
         await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ scriptId: Date.now(), rating: stars, script, creatorVoice }),
+          body: JSON.stringify({ scriptId: Date.now(), rating: stars, script, creatorVoice, feedbackNote }),
         });
       } catch { /* silent fail */ }
     }
