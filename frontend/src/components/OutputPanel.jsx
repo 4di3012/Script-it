@@ -4,47 +4,24 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   const [copied, setCopied] = useState(false);
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
   const [feedbackNote, setFeedbackNote] = useState('');
-  const [showAdditionalFeedback, setShowAdditionalFeedback] = useState(false);
-  const [additionalFeedback, setAdditionalFeedback] = useState('');
+  const [thankYou, setThankYou] = useState(false);
 
-  useEffect(() => { setRating(0); setSubmitted(false); setFeedbackNote(''); setShowAdditionalFeedback(false); setAdditionalFeedback(''); }, [script]);
+  useEffect(() => {
+    setRating(0);
+    setFeedbackNote('');
+    setThankYou(false);
+  }, [script]);
 
-  const handleRating = async (stars) => {
-    setRating(stars);
-    if (stars > 3) {
-      setSubmitted(true);
-      try {
-        await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ scriptId: Date.now(), rating: stars, script, creatorVoice, feedbackNote }),
-        });
-      } catch { /* silent fail */ }
-    }
-  };
-
-  const handleSubmitAdditional = async () => {
-    const note = additionalFeedback;
-    setAdditionalFeedback('');
-    setShowAdditionalFeedback(false);
+  const handleSubmitFeedback = async () => {
+    const note = feedbackNote;
+    setFeedbackNote('');
+    setThankYou(true);
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, feedbackNote, additionalFeedback: note }),
-      });
-    } catch { /* silent fail */ }
-  };
-
-  const handleSubmitNote = async () => {
-    setSubmitted(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, feedbackNote }),
+        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, feedbackNote: note }),
       });
     } catch { /* silent fail */ }
   };
@@ -55,7 +32,6 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // fallback for older browsers
       const el = document.createElement('textarea');
       el.value = script;
       document.body.appendChild(el);
@@ -73,8 +49,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   if (script && !isLoading) {
     try {
       const cleanScript = script.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      const parsed = JSON.parse(cleanScript);
-      parsedScript = parsed;
+      parsedScript = JSON.parse(cleanScript);
     } catch { /* fall through to plain text */ }
   }
 
@@ -205,13 +180,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                     <div style={{ width: '3px', height: '14px', background: color, borderRadius: '2px' }} />
-                    <span style={{
-                      fontSize: '10px',
-                      fontWeight: '700',
-                      color,
-                      letterSpacing: '0.14em',
-                      textTransform: 'uppercase',
-                    }}>{label}</span>
+                    <span style={{ fontSize: '10px', fontWeight: '700', color, letterSpacing: '0.14em', textTransform: 'uppercase' }}>{label}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {items.map((item, i) => (
@@ -219,7 +188,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                         key={i}
                         style={{
                           background: cardBg,
-                          border: `1px solid #2a2620`,
+                          border: '1px solid #2a2620',
                           borderLeft: `2px solid ${color}33`,
                           borderRadius: '8px',
                           padding: '14px 16px',
@@ -265,80 +234,19 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
         <div
           style={{
             borderTop: '1px solid #2a2620',
-            padding: '14px 24px',
+            padding: '16px 24px',
             display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            flexWrap: 'wrap',
+            flexDirection: 'column',
+            gap: '12px',
           }}
         >
-          <span style={{ fontSize: '12px', color: '#5a5248' }}>How did this script perform?</span>
-          {submitted ? (
-            <>
-              <span style={{ fontSize: '12px', color: '#4ade80' }}>
-                Thanks! We'll use this to improve future scripts.
-              </span>
-              {!showAdditionalFeedback && (
-                <button
-                  onClick={() => setShowAdditionalFeedback(true)}
-                  style={{
-                    padding: '4px 12px',
-                    background: 'none',
-                    color: '#7a7268',
-                    border: '1px solid #2a2620',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Add More Feedback
-                </button>
-              )}
-              {showAdditionalFeedback && (
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-                  <textarea
-                    value={additionalFeedback}
-                    onChange={(e) => setAdditionalFeedback(e.target.value)}
-                    placeholder="How did it perform? Views, engagement, conversions, what worked, what didn't..."
-                    rows={3}
-                    style={{
-                      background: '#0d0d0d',
-                      border: '1px solid #2a2620',
-                      borderRadius: '6px',
-                      color: '#f0ece6',
-                      padding: '8px 10px',
-                      fontSize: '12px',
-                      resize: 'vertical',
-                      lineHeight: '1.6',
-                      fontFamily: 'inherit',
-                    }}
-                    onFocus={(e) => (e.target.style.borderColor = '#c9a84c')}
-                    onBlur={(e) => (e.target.style.borderColor = '#2a2620')}
-                  />
-                  <button
-                    onClick={handleSubmitAdditional}
-                    style={{
-                      alignSelf: 'flex-end',
-                      padding: '8px 14px',
-                      background: '#6c63ff',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            [1, 2, 3, 4, 5].map((s) => (
+          {/* Stars */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#5a5248' }}>How did this script perform?</span>
+            {[1, 2, 3, 4, 5].map((s) => (
               <button
                 key={s}
-                onClick={() => handleRating(s)}
+                onClick={() => setRating(s)}
                 onMouseEnter={() => setHovered(s)}
                 onMouseLeave={() => setHovered(0)}
                 style={{
@@ -354,44 +262,56 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
               >
                 ★
               </button>
-            ))
-          )}
-          {rating > 0 && rating <= 3 && !submitted && (
-            <div style={{ width: '100%', display: 'flex', gap: '8px', marginTop: '8px' }}>
-              <input
-                type="text"
+            ))}
+          </div>
+
+          {/* Feedback textarea — appears after any star is clicked */}
+          {rating > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                Feedback (optional)
+              </label>
+              <textarea
                 value={feedbackNote}
                 onChange={(e) => setFeedbackNote(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmitNote()}
-                placeholder="What felt off? (optional)"
+                placeholder="What worked, what didn't, how did the visuals feel, how did it perform..."
+                rows={3}
                 style={{
-                  flex: 1,
                   background: '#0d0d0d',
                   border: '1px solid #2a2620',
                   borderRadius: '6px',
                   color: '#f0ece6',
                   padding: '8px 10px',
                   fontSize: '12px',
+                  resize: 'vertical',
+                  lineHeight: '1.6',
                   fontFamily: 'inherit',
+                  transition: 'border-color 0.2s',
                 }}
                 onFocus={(e) => (e.target.style.borderColor = '#c9a84c')}
                 onBlur={(e) => (e.target.style.borderColor = '#2a2620')}
               />
-              <button
-                onClick={handleSubmitNote}
-                style={{
-                  padding: '8px 14px',
-                  background: '#6c63ff',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                }}
-              >
-                Send
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button
+                  onClick={handleSubmitFeedback}
+                  style={{
+                    alignSelf: 'flex-start',
+                    padding: '8px 16px',
+                    background: '#6c63ff',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Submit Feedback
+                </button>
+                {thankYou && (
+                  <span style={{ fontSize: '12px', color: '#4ade80' }}>Thanks!</span>
+                )}
+              </div>
             </div>
           )}
         </div>
