@@ -79,15 +79,17 @@ router.post('/generate', async (req, res) => {
 
   try {
     let memoryContext = '';
-    if (creatorVoice?.trim()) {
-      const voicePattern = `%${creatorVoice.trim()}%`;
-      const [{ data: highRated }, { data: lowRated }] = await Promise.all([
-        getSupabase().from('script_feedback').select('script').gte('rating', 4).ilike('creator_voice', voicePattern).order('rating', { ascending: false }).limit(3),
-        getSupabase().from('script_feedback').select('script').lte('rating', 2).ilike('creator_voice', voicePattern).order('rating', { ascending: true }).limit(3),
-      ]);
-      if (highRated?.length) memoryContext += '\n\nHere are examples of scripts this creator style rated highly — match this tone and style:\n' + highRated.map(r => r.script).join('\n---\n');
-      if (lowRated?.length)  memoryContext += '\n\nHere are examples this creator style rated poorly — avoid these patterns:\n'  + lowRated.map(r => r.script).join('\n---\n');
-    }
+    const voice = creatorVoice?.trim();
+    const [{ data: highRated }, { data: lowRated }] = await Promise.all([
+      voice
+        ? getSupabase().from('script_feedback').select('script').gte('rating', 4).ilike('creator_voice', `%${voice}%`).order('rating', { ascending: false }).limit(3)
+        : getSupabase().from('script_feedback').select('script').gte('rating', 4).order('rating', { ascending: false }).limit(3),
+      voice
+        ? getSupabase().from('script_feedback').select('script').lte('rating', 2).ilike('creator_voice', `%${voice}%`).order('rating', { ascending: true }).limit(3)
+        : getSupabase().from('script_feedback').select('script').lte('rating', 2).order('rating', { ascending: true }).limit(3),
+    ]);
+    if (highRated?.length) memoryContext += '\n\nHere are examples of scripts this creator style rated highly — match this tone and style:\n' + highRated.map(r => r.script).join('\n---\n');
+    if (lowRated?.length)  memoryContext += '\n\nHere are examples this creator style rated poorly — avoid these patterns:\n'  + lowRated.map(r => r.script).join('\n---\n');
 
     const stream = getClient().messages.stream({
       model: 'claude-opus-4-6',
