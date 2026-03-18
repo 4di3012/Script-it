@@ -10,7 +10,7 @@ function getSupabase() {
 }
 
 router.post('/feedback', async (req, res) => {
-  const { scriptId, rating, script, creatorVoice } = req.body;
+  const { scriptId, rating, script, creatorVoice, feedbackNote } = req.body;
 
   if (!rating || !script) {
     return res.status(400).json({ error: 'rating and script are required.' });
@@ -21,6 +21,7 @@ router.post('/feedback', async (req, res) => {
     rating,
     script,
     creator_voice: creatorVoice || null,
+    feedback_note: feedbackNote || null,
   });
 
   if (error) {
@@ -28,7 +29,13 @@ router.post('/feedback', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 
-  res.json({ ok: true });
+  const { count } = await getSupabase()
+    .from('script_feedback')
+    .select('*', { count: 'exact', head: true })
+    .eq('creator_voice', creatorVoice || '');
+  console.log(`Feedbacks for this creator voice: ${count ?? 0}`);
+
+  res.json({ ok: true, voiceFeedbackCount: count ?? 0 });
 });
 
 export default router;

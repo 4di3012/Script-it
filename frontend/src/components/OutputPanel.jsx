@@ -5,17 +5,31 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [feedbackNote, setFeedbackNote] = useState('');
 
-  useEffect(() => { setRating(0); setSubmitted(false); }, [script]);
+  useEffect(() => { setRating(0); setSubmitted(false); setFeedbackNote(''); }, [script]);
 
   const handleRating = async (stars) => {
     setRating(stars);
+    if (stars > 3) {
+      setSubmitted(true);
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scriptId: Date.now(), rating: stars, script, creatorVoice }),
+        });
+      } catch { /* silent fail */ }
+    }
+  };
+
+  const handleSubmitNote = async () => {
     setSubmitted(true);
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scriptId: Date.now(), rating: stars, script, creatorVoice }),
+        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, feedbackNote }),
       });
     } catch { /* silent fail */ }
   };
@@ -194,6 +208,41 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                 ★
               </button>
             ))
+          )}
+          {rating > 0 && rating <= 3 && !submitted && (
+            <div style={{ width: '100%', display: 'flex', gap: '8px', marginTop: '8px' }}>
+              <input
+                type="text"
+                value={feedbackNote}
+                onChange={(e) => setFeedbackNote(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmitNote()}
+                placeholder="What felt off? (optional)"
+                style={{
+                  flex: 1,
+                  background: '#0f0f0f',
+                  border: '1px solid #2e2e2e',
+                  borderRadius: '6px',
+                  color: '#f0f0f0',
+                  padding: '8px 10px',
+                  fontSize: '12px',
+                }}
+              />
+              <button
+                onClick={handleSubmitNote}
+                style={{
+                  padding: '8px 14px',
+                  background: '#7c6bff',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                }}
+              >
+                Send
+              </button>
+            </div>
           )}
         </div>
       )}

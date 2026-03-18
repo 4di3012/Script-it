@@ -1,7 +1,14 @@
 import { Router } from 'express';
 import Anthropic from '@anthropic-ai/sdk';
+import { createClient } from '@supabase/supabase-js';
 
 const router = Router();
+
+let supabase = null;
+function getSupabase() {
+  if (!supabase) supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+  return supabase;
+}
 
 // Lazy: created on first request so dotenv has already run by then
 let client = null;
@@ -71,6 +78,17 @@ router.post('/generate', async (req, res) => {
   res.setHeader('Connection', 'keep-alive');
 
   try {
+    let memoryContext = '';
+    if (creatorVoice?.trim()) {
+      const voicePattern = `%${creatorVoice.trim()}%`;
+      const [{ data: highRated }, { data: lowRated }] = await Promise.all([
+        getSupabase().from('script_feedback').select('script').gte('rating', 4).ilike('creator_voice', voicePattern).order('rating', { ascending: false }).limit(3),
+        getSupabase().from('script_feedback').select('script').lte('rating', 2).ilike('creator_voice', voicePattern).order('rating', { ascending: true }).limit(3),
+      ]);
+      if (highRated?.length) memoryContext += '\n\nHere are examples of scripts this creator style rated highly — match this tone and style:\n' + highRated.map(r => r.script).join('\n---\n');
+      if (lowRated?.length)  memoryContext += '\n\nHere are examples this creator style rated poorly — avoid these patterns:\n'  + lowRated.map(r => r.script).join('\n---\n');
+    }
+
     const stream = getClient().messages.stream({
       model: 'claude-opus-4-6',
       max_tokens: 8096,
@@ -78,7 +96,7 @@ router.post('/generate', async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: buildPrompt({ referenceScript, productName, productDescription, keyBenefits, targetAudience, creatorVoice }),
+          content: buildPrompt({ referenceScript, productName, productDescription, keyBenefits, targetAudience, creatorVoice }) + memoryContext,
         },
       ],
     });
