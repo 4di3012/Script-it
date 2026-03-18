@@ -41,7 +41,8 @@ export default function InputForm({ values, onChange, onSubmit, isLoading }) {
     if (saved && !values.creatorVoice) onChange('creatorVoice', saved);
   }, []);
 
-  const canSubmit = Object.values(values).every((v) => v.trim()) && !isLoading;
+  const { creatorVoice: _cv, ...requiredValues } = values;
+  const canSubmit = Object.values(requiredValues).every((v) => v.trim()) && !isLoading;
 
   return (
     <form
@@ -105,7 +106,7 @@ export default function InputForm({ values, onChange, onSubmit, isLoading }) {
         />
       </Field>
 
-      <Field label="Your Creator Voice" hint="Optional — describe how you talk on camera so the script sounds like you.">
+      <Field label="Your Creator Voice (optional)" hint="Describe how you talk on camera so the script sounds like you.">
         <textarea
           value={values.creatorVoice}
           onChange={(e) => { onChange('creatorVoice', e.target.value); localStorage.setItem('creatorVoice', e.target.value); }}
