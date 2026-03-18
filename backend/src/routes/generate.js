@@ -90,6 +90,8 @@ router.post('/generate', async (req, res) => {
     ]);
     if (highRated?.length) memoryContext += '\n\nHere are examples of scripts this creator style rated highly — match this tone and style:\n' + highRated.map(r => r.script).join('\n---\n');
     if (lowRated?.length)  memoryContext += '\n\nHere are examples this creator style rated poorly — avoid these patterns:\n'  + lowRated.map(r => r.script).join('\n---\n');
+    console.log(`[memory] highRated: ${highRated?.length ?? 0}, lowRated: ${lowRated?.length ?? 0}`);
+    console.log(`[memory] context injected:\n${memoryContext || '(none)'}\n`);
 
     const stream = getClient().messages.stream({
       model: 'claude-opus-4-6',
