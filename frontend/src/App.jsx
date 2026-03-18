@@ -106,11 +106,11 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0f0f0f' }}>
+    <div style={{ minHeight: '100vh', background: '#0d0d0d' }}>
       {/* Header */}
       <header
         style={{
-          borderBottom: '1px solid #1e1e1e',
+          borderBottom: '1px solid #2a2620',
           padding: '18px 32px',
           display: 'flex',
           alignItems: 'center',
@@ -126,18 +126,18 @@ export default function App() {
           style={{ flexShrink: 0 }}
         >
           {/* Open book */}
-          <path d="M4 20V9C4 9 9 7.5 14 9C19 7.5 24 9 24 9V20C19 18.5 14 20 14 20C14 20 9 18.5 4 20Z" stroke="#a78bfa" strokeWidth="1.5" strokeLinejoin="round" fill="#1a1530"/>
-          <line x1="14" y1="9" x2="14" y2="20" stroke="#a78bfa" strokeWidth="1.5"/>
+          <path d="M4 20V9C4 9 9 7.5 14 9C19 7.5 24 9 24 9V20C19 18.5 14 20 14 20C14 20 9 18.5 4 20Z" stroke="#c9a84c" strokeWidth="1.5" strokeLinejoin="round" fill="#1a1508"/>
+          <line x1="14" y1="9" x2="14" y2="20" stroke="#c9a84c" strokeWidth="1.5"/>
           {/* Feather quill */}
-          <path d="M20 5C20 5 23 7 22 11C21 14 17 15.5 15.5 14.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
-          <path d="M20 5C18 7 16 10 15.5 14.5" stroke="#a78bfa" strokeWidth="1" strokeLinecap="round"/>
-          <line x1="15.5" y1="14.5" x2="14.5" y2="17" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+          <path d="M20 5C20 5 23 7 22 11C21 14 17 15.5 15.5 14.5" stroke="#f0ece6" strokeWidth="1.2" strokeLinecap="round"/>
+          <path d="M20 5C18 7 16 10 15.5 14.5" stroke="#c9a84c" strokeWidth="1" strokeLinecap="round"/>
+          <line x1="15.5" y1="14.5" x2="14.5" y2="17" stroke="#f0ece6" strokeWidth="1" strokeLinecap="round"/>
         </svg>
-        <h1 style={{ fontSize: '18px', fontWeight: '700', color: '#f0f0f0' }}>
+        <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '20px', fontWeight: '700', color: '#f0ece6', letterSpacing: '-0.01em' }}>
           Script It
         </h1>
-        <span style={{ color: '#555', fontSize: '13px', marginLeft: '4px' }}>
-          — video ad scripts that mirror what works
+        <span style={{ color: '#4a4540', fontSize: '11px', marginLeft: '6px', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: '500' }}>
+          Video ad scripts that mirror what works
         </span>
       </header>
 
@@ -155,7 +155,7 @@ export default function App() {
       >
         {/* Left: Input */}
         <div>
-          <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#ccc', marginBottom: '20px' }}>
+          <h2 style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Your inputs
           </h2>
           <InputForm
@@ -168,7 +168,7 @@ export default function App() {
 
         {/* Right: Output */}
         <div>
-          <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#ccc', marginBottom: '20px' }}>
+          <h2 style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Output
           </h2>
           <OutputPanel script={script} isLoading={isLoading} error={error} creatorVoice={values.creatorVoice} />

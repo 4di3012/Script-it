@@ -79,17 +79,17 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   }
 
   const SECTIONS = [
-    { key: 'hook',  label: 'HOOK',  color: '#f59e0b' },
-    { key: 'intro', label: 'INTRO', color: '#7c6bff' },
-    { key: 'body',  label: 'BODY',  color: '#3b82f6' },
-    { key: 'close', label: 'CLOSE', color: '#4ade80' },
+    { key: 'hook',  label: 'Hook',  color: '#c9a84c', cardBg: 'linear-gradient(135deg, #1a1608 0%, #110f05 100%)' },
+    { key: 'intro', label: 'Intro', color: '#6c8fff', cardBg: 'linear-gradient(135deg, #0e1020 0%, #0a0c18 100%)' },
+    { key: 'body',  label: 'Body',  color: '#7db87d', cardBg: 'linear-gradient(135deg, #0e180e 0%, #0a120a 100%)' },
+    { key: 'close', label: 'Close', color: '#c97878', cardBg: 'linear-gradient(135deg, #1a0e0e 0%, #120a0a 100%)' },
   ];
 
   return (
     <div
       style={{
-        background: '#1a1a1a',
-        border: '1px solid #2e2e2e',
+        background: '#131210',
+        border: '1px solid #2a2620',
         borderRadius: '10px',
         display: 'flex',
         flexDirection: 'column',
@@ -104,10 +104,10 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '14px 18px',
-          borderBottom: '1px solid #2e2e2e',
+          borderBottom: '1px solid #2a2620',
         }}
       >
-        <span style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        <span style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
           Generated Script
         </span>
         {script && (
@@ -115,9 +115,9 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
             onClick={handleCopy}
             style={{
               padding: '6px 14px',
-              background: copied ? '#1a3a2a' : '#242424',
-              color: copied ? '#4ade80' : '#ccc',
-              border: `1px solid ${copied ? '#4ade80' : '#3a3a3a'}`,
+              background: copied ? '#0f1a10' : '#1c1a17',
+              color: copied ? '#4ade80' : '#7a7268',
+              border: `1px solid ${copied ? '#4ade80' : '#2a2620'}`,
               borderRadius: '6px',
               fontSize: '12px',
               fontWeight: '600',
@@ -142,7 +142,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#444',
+              color: '#2a2620',
               textAlign: 'center',
               gap: '12px',
             }}
@@ -154,15 +154,15 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
               <line x1="16" y1="17" x2="8" y2="17" />
               <polyline points="10 9 9 9 8 9" />
             </svg>
-            <p style={{ fontSize: '14px' }}>Your script will appear here</p>
+            <p style={{ fontSize: '14px', color: '#3a3530' }}>Your script will appear here</p>
           </div>
         )}
 
         {error && (
           <div
             style={{
-              background: '#1f1010',
-              border: '1px solid #5a2020',
+              background: '#180e0e',
+              border: '1px solid #4a2020',
               borderRadius: '8px',
               padding: '14px 16px',
               color: '#f87171',
@@ -174,40 +174,66 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
         )}
 
         {isLoading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#888', fontSize: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#7a7268', fontSize: '14px' }}>
             <span
               style={{
                 display: 'inline-block',
                 width: '2px',
                 height: '16px',
-                background: '#7c6bff',
+                background: '#c9a84c',
                 verticalAlign: 'text-bottom',
                 animation: 'blink 0.8s step-end infinite',
               }}
             />
-            Generating your script...
+            Generating your script…
           </div>
         )}
 
         {!isLoading && !error && parsedScript && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-            {SECTIONS.map(({ key, label, color }) => {
+            {SECTIONS.map(({ key, label, color, cardBg }, sectionIndex) => {
               const items = parsedScript[key];
               if (!items?.length) return null;
               return (
-                <div key={key}>
+                <div
+                  key={key}
+                  style={{
+                    animation: 'fadeInUp 0.45s ease forwards',
+                    animationDelay: `${sectionIndex * 0.08}s`,
+                    opacity: 0,
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                    <div style={{ width: '3px', height: '16px', background: color, borderRadius: '2px' }} />
-                    <span style={{ fontSize: '11px', fontWeight: '700', color, letterSpacing: '0.1em' }}>{label}</span>
+                    <div style={{ width: '3px', height: '14px', background: color, borderRadius: '2px' }} />
+                    <span style={{
+                      fontSize: '10px',
+                      fontWeight: '700',
+                      color,
+                      letterSpacing: '0.14em',
+                      textTransform: 'uppercase',
+                    }}>{label}</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {items.map((item, i) => (
-                      <div key={i} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px' }}>
-                        <p style={{ fontSize: '15px', color: '#f0f0f0', lineHeight: '1.65', margin: '0 0 10px 0' }}>{item.talking_point}</p>
-                        <div style={{ height: '1px', background: '#2a2a2a', margin: '0 0 10px 0' }} />
-                        <p style={{ fontSize: '12px', color: '#888', margin: 0, lineHeight: '1.5' }}>
-                          <span style={{ color: '#7c6bff', fontWeight: '600' }}>📷 Visual: </span>
-                          <em>{item.visual}</em>
+                      <div
+                        key={i}
+                        style={{
+                          background: cardBg,
+                          border: `1px solid #2a2620`,
+                          borderLeft: `2px solid ${color}33`,
+                          borderRadius: '8px',
+                          padding: '14px 16px',
+                          boxShadow: '0 2px 16px rgba(0,0,0,0.5)',
+                          animation: 'fadeInUp 0.4s ease forwards',
+                          animationDelay: `${sectionIndex * 0.08 + i * 0.05}s`,
+                          opacity: 0,
+                        }}
+                      >
+                        <p style={{ fontSize: '15px', color: '#f0ece6', lineHeight: '1.7', margin: '0 0 10px 0', fontWeight: '400' }}>{item.talking_point}</p>
+                        <div style={{ height: '1px', background: '#2a2620', margin: '0 0 10px 0' }} />
+                        <p style={{ fontSize: '12px', color: '#5a5248', margin: 0, lineHeight: '1.5', fontStyle: 'italic' }}>
+                          <span style={{ color, fontWeight: '600', fontStyle: 'normal' }}>📷 </span>
+                          {item.visual}
                         </p>
                       </div>
                     ))}
@@ -226,7 +252,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
               fontFamily: 'inherit',
               fontSize: '14px',
               lineHeight: '1.8',
-              color: '#e8e8e8',
+              color: '#f0ece6',
               margin: 0,
             }}
           >
@@ -238,7 +264,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
       {script && !isLoading && (
         <div
           style={{
-            borderTop: '1px solid #2e2e2e',
+            borderTop: '1px solid #2a2620',
             padding: '14px 24px',
             display: 'flex',
             alignItems: 'center',
@@ -246,7 +272,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
             flexWrap: 'wrap',
           }}
         >
-          <span style={{ fontSize: '12px', color: '#888' }}>How did this script perform?</span>
+          <span style={{ fontSize: '12px', color: '#5a5248' }}>How did this script perform?</span>
           {submitted ? (
             <>
               <span style={{ fontSize: '12px', color: '#4ade80' }}>
@@ -258,8 +284,8 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                   style={{
                     padding: '4px 12px',
                     background: 'none',
-                    color: '#888',
-                    border: '1px solid #3a3a3a',
+                    color: '#7a7268',
+                    border: '1px solid #2a2620',
                     borderRadius: '6px',
                     fontSize: '12px',
                     cursor: 'pointer',
@@ -276,22 +302,25 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                     placeholder="How did it perform? Views, engagement, conversions, what worked, what didn't..."
                     rows={3}
                     style={{
-                      background: '#0f0f0f',
-                      border: '1px solid #2e2e2e',
+                      background: '#0d0d0d',
+                      border: '1px solid #2a2620',
                       borderRadius: '6px',
-                      color: '#f0f0f0',
+                      color: '#f0ece6',
                       padding: '8px 10px',
                       fontSize: '12px',
                       resize: 'vertical',
                       lineHeight: '1.6',
+                      fontFamily: 'inherit',
                     }}
+                    onFocus={(e) => (e.target.style.borderColor = '#c9a84c')}
+                    onBlur={(e) => (e.target.style.borderColor = '#2a2620')}
                   />
                   <button
                     onClick={handleSubmitAdditional}
                     style={{
                       alignSelf: 'flex-end',
                       padding: '8px 14px',
-                      background: '#7c6bff',
+                      background: '#6c63ff',
                       color: '#fff',
                       border: 'none',
                       borderRadius: '6px',
@@ -317,8 +346,9 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: '22px',
-                  color: s <= (hovered || rating) ? '#f59e0b' : '#3a3a3a',
-                  transition: 'color 0.1s',
+                  color: s <= (hovered || rating) ? '#c9a84c' : '#2a2620',
+                  filter: s <= (hovered || rating) ? 'drop-shadow(0 0 6px rgba(201,168,76,0.6))' : 'none',
+                  transition: 'color 0.1s, filter 0.1s',
                   padding: '0 2px',
                 }}
               >
@@ -336,19 +366,22 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
                 placeholder="What felt off? (optional)"
                 style={{
                   flex: 1,
-                  background: '#0f0f0f',
-                  border: '1px solid #2e2e2e',
+                  background: '#0d0d0d',
+                  border: '1px solid #2a2620',
                   borderRadius: '6px',
-                  color: '#f0f0f0',
+                  color: '#f0ece6',
                   padding: '8px 10px',
                   fontSize: '12px',
+                  fontFamily: 'inherit',
                 }}
+                onFocus={(e) => (e.target.style.borderColor = '#c9a84c')}
+                onBlur={(e) => (e.target.style.borderColor = '#2a2620')}
               />
               <button
                 onClick={handleSubmitNote}
                 style={{
                   padding: '8px 14px',
-                  background: '#7c6bff',
+                  background: '#6c63ff',
                   color: '#fff',
                   border: 'none',
                   borderRadius: '6px',

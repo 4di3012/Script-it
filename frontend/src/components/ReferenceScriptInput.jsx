@@ -1,21 +1,22 @@
 import { useState, useRef, useEffect } from 'react';
 
-const ACCENT = '#7c6bff';
-const BORDER = '#2e2e2e';
-const MUTED = '#888';
+const ACCENT = '#c9a84c';
+const ACCENT_BTN = '#6c63ff';
+const BORDER = '#2a2620';
+const MUTED = '#7a7268';
 
 const FIELD_STYLES = {
   width: '100%',
-  background: '#0f0f0f',
+  background: '#0d0d0d',
   border: `1px solid ${BORDER}`,
   borderRadius: '8px',
-  color: '#f0f0f0',
+  color: '#f0ece6',
   padding: '10px 12px',
   resize: 'vertical',
   lineHeight: '1.6',
   fontFamily: 'inherit',
   fontSize: '14px',
-  transition: 'border-color 0.15s',
+  transition: 'border-color 0.2s',
 };
 
 const TABS = [
@@ -115,11 +116,11 @@ export default function ReferenceScriptInput({ value, onChange }) {
       {/* Label */}
       <label style={{
         display: 'block',
-        fontSize: '12px',
+        fontSize: '11px',
         fontWeight: '600',
-        color: MUTED,
+        color: ACCENT,
         textTransform: 'uppercase',
-        letterSpacing: '0.06em',
+        letterSpacing: '0.1em',
         marginBottom: '10px',
       }}>
         Reference Script
@@ -135,15 +136,16 @@ export default function ReferenceScriptInput({ value, onChange }) {
             disabled={isTranscribing}
             style={{
               padding: '8px 16px',
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: '500',
-              color: activeTab === tab.id ? '#f0f0f0' : MUTED,
+              color: activeTab === tab.id ? '#f0ece6' : MUTED,
               background: 'none',
               border: 'none',
               borderBottom: activeTab === tab.id ? `2px solid ${ACCENT}` : '2px solid transparent',
               marginBottom: '-1px',
               transition: 'color 0.15s',
               cursor: isTranscribing ? 'not-allowed' : 'pointer',
+              letterSpacing: '0.02em',
             }}
           >
             {tab.label}
@@ -193,8 +195,8 @@ export default function ReferenceScriptInput({ value, onChange }) {
           {error && (
             <div style={{
               marginTop: '10px',
-              background: '#1f1010',
-              border: '1px solid #5a2020',
+              background: '#180e0e',
+              border: '1px solid #4a2020',
               borderRadius: '8px',
               padding: '12px 14px',
               color: '#f87171',
@@ -211,7 +213,7 @@ export default function ReferenceScriptInput({ value, onChange }) {
               <button
                 type="button"
                 onClick={() => switchTab('text')}
-                style={{ background: 'none', border: 'none', color: ACCENT, fontSize: '12px', cursor: 'pointer', padding: 0 }}
+                style={{ background: 'none', border: 'none', color: ACCENT_BTN, fontSize: '12px', cursor: 'pointer', padding: 0 }}
               >
                 view and edit
               </button>
@@ -239,13 +241,13 @@ function TranscribingState() {
       <div style={{
         width: '28px',
         height: '28px',
-        border: '3px solid #2e2e2e',
+        border: `3px solid ${BORDER}`,
         borderTopColor: ACCENT,
         borderRadius: '50%',
         animation: 'transcribe-spin 0.8s linear infinite',
       }} />
       <p style={{ fontSize: '14px' }}>Transcribing video…</p>
-      <p style={{ fontSize: '12px', color: '#555' }}>This usually takes 10–30 seconds</p>
+      <p style={{ fontSize: '12px', color: '#3a3530' }}>This usually takes 10–30 seconds</p>
       <style>{`@keyframes transcribe-spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
@@ -255,7 +257,7 @@ function UrlTab({ url, onUrlChange, onTranscribe }) {
   const hasUrl = url.trim().length > 0;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <p style={{ fontSize: '12px', color: '#666' }}>
+      <p style={{ fontSize: '12px', color: '#4a4540' }}>
         Paste a YouTube, TikTok, Instagram Reels, or Facebook video URL.
       </p>
       <div style={{ display: 'flex', gap: '8px' }}>
@@ -275,8 +277,8 @@ function UrlTab({ url, onUrlChange, onTranscribe }) {
           disabled={!hasUrl}
           style={{
             padding: '10px 18px',
-            background: hasUrl ? ACCENT : '#2e2e2e',
-            color: hasUrl ? '#fff' : '#555',
+            background: hasUrl ? ACCENT_BTN : '#1c1a17',
+            color: hasUrl ? '#fff' : '#4a4540',
             borderRadius: '8px',
             fontWeight: '600',
             fontSize: '13px',
@@ -308,7 +310,7 @@ function FileTab({ file, isDragging, fileInputRef, onDragOver, onDragLeave, onDr
           textAlign: 'center',
           cursor: 'pointer',
           transition: 'border-color 0.15s, background 0.15s',
-          background: isDragging ? 'rgba(124, 107, 255, 0.05)' : 'transparent',
+          background: isDragging ? 'rgba(201, 168, 76, 0.05)' : 'transparent',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -326,7 +328,7 @@ function FileTab({ file, isDragging, fileInputRef, onDragOver, onDragLeave, onDr
         </svg>
         {file ? (
           <>
-            <p style={{ fontSize: '14px', color: '#f0f0f0' }}>{file.name}</p>
+            <p style={{ fontSize: '14px', color: '#f0ece6' }}>{file.name}</p>
             <p style={{ fontSize: '12px', color: MUTED }}>
               {(file.size / 1024 / 1024).toFixed(1)} MB — click to change
             </p>
@@ -336,7 +338,7 @@ function FileTab({ file, isDragging, fileInputRef, onDragOver, onDragLeave, onDr
             <p style={{ fontSize: '14px', color: isDragging ? ACCENT : MUTED }}>
               Drop a video file here
             </p>
-            <p style={{ fontSize: '12px', color: '#555' }}>or click to browse — MP4, MOV, WebM, etc.</p>
+            <p style={{ fontSize: '12px', color: '#3a3530' }}>or click to browse — MP4, MOV, WebM, etc.</p>
           </>
         )}
         <input
@@ -355,7 +357,7 @@ function FileTab({ file, isDragging, fileInputRef, onDragOver, onDragLeave, onDr
           onClick={onTranscribe}
           style={{
             padding: '10px 18px',
-            background: ACCENT,
+            background: ACCENT_BTN,
             color: '#fff',
             borderRadius: '8px',
             fontWeight: '600',
