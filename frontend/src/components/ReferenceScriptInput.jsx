@@ -116,11 +116,11 @@ export default function ReferenceScriptInput({ value, onChange }) {
       {/* Label */}
       <label style={{
         display: 'block',
-        fontSize: '11px',
+        fontSize: '13px',
         fontWeight: '600',
         color: ACCENT,
         textTransform: 'uppercase',
-        letterSpacing: '0.1em',
+        letterSpacing: '0.12em',
         marginBottom: '10px',
       }}>
         Reference Script

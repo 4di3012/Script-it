@@ -155,7 +155,7 @@ export default function App() {
       >
         {/* Left: Input */}
         <div>
-          <h2 style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          <h2 style={{ fontSize: '13px', fontWeight: '600', color: '#c9a84c', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Your inputs
           </h2>
           <InputForm
@@ -168,7 +168,7 @@ export default function App() {
 
         {/* Right: Output */}
         <div>
-          <h2 style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          <h2 style={{ fontSize: '13px', fontWeight: '600', color: '#c9a84c', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Output
           </h2>
           <OutputPanel script={script} isLoading={isLoading} error={error} creatorVoice={values.creatorVoice} />

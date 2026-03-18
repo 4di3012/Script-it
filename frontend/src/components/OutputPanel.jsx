@@ -82,7 +82,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
           borderBottom: '1px solid #2a2620',
         }}
       >
-        <span style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <span style={{ fontSize: '13px', fontWeight: '600', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
           Generated Script
         </span>
         {script && (
@@ -268,7 +268,7 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
           {/* Feedback textarea — appears after any star is clicked */}
           {rating > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '11px', fontWeight: '600', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              <label style={{ fontSize: '13px', fontWeight: '600', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Feedback (optional)
               </label>
               <textarea

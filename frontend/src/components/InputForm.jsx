@@ -14,11 +14,11 @@ const FIELD_STYLES = {
 
 const LABEL_STYLES = {
   display: 'block',
-  fontSize: '11px',
+  fontSize: '13px',
   fontWeight: '600',
   color: '#c9a84c',
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: '0.12em',
   marginBottom: '6px',
 };
 
