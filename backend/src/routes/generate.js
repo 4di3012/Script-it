@@ -131,9 +131,8 @@ router.post('/generate', async (req, res) => {
     console.log(`[memory] context injected:\n${memoryContext || '(none)'}\n`);
 
     const stream = getClient().messages.stream({
-      model: 'claude-opus-4-6',
-      max_tokens: 8096,
-      thinking: { type: 'adaptive' },
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
       messages: [
         {
           role: 'user',
