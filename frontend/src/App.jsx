@@ -11,6 +11,7 @@ const INITIAL_VALUES = {
   productDescription: '',
   keyBenefits: '',
   targetAudience: '',
+  creatorVoice: '',
 };
 
 export default function App() {

@@ -14,8 +14,11 @@ function getClient() {
   return client;
 }
 
-function buildPrompt({ referenceScript, productName, productDescription, keyBenefits, targetAudience }) {
-  return `You are an expert direct-response copywriter specializing in video ad scripts.
+function buildPrompt({ referenceScript, productName, productDescription, keyBenefits, targetAudience, creatorVoice }) {
+  const voiceLine = creatorVoice?.trim()
+    ? `\nWrite in this creator's voice and style: ${creatorVoice}. Sound like a real person talking on camera, not a polished ad. Use natural speech patterns, avoid buzzwords like "dialed-in", "game-changer", "unlock", "zero brain fog". Write how this specific creator actually talks.\n`
+    : '';
+  return `You are an expert direct-response copywriter specializing in video ad scripts.${voiceLine}
 
 Your task is to analyze a reference ad script and write a new script for a different product that mirrors the EXACT same structure, pacing, and tone.
 
@@ -57,7 +60,7 @@ Output the script only. No preamble, no analysis, no labels — just the finishe
 }
 
 router.post('/generate', async (req, res) => {
-  const { referenceScript, productName, productDescription, keyBenefits, targetAudience } = req.body;
+  const { referenceScript, productName, productDescription, keyBenefits, targetAudience, creatorVoice } = req.body;
 
   if (!referenceScript || !productName || !productDescription || !keyBenefits || !targetAudience) {
     return res.status(400).json({ error: 'All fields are required.' });
@@ -75,7 +78,7 @@ router.post('/generate', async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: buildPrompt({ referenceScript, productName, productDescription, keyBenefits, targetAudience }),
+          content: buildPrompt({ referenceScript, productName, productDescription, keyBenefits, targetAudience, creatorVoice }),
         },
       ],
     });

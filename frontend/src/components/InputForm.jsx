@@ -99,6 +99,18 @@ export default function InputForm({ values, onChange, onSubmit, isLoading }) {
         />
       </Field>
 
+      <Field label="Your Creator Voice" hint="Optional — describe how you talk on camera so the script sounds like you.">
+        <textarea
+          value={values.creatorVoice}
+          onChange={handleChange('creatorVoice')}
+          placeholder="e.g. I'm a 22 year old gym bro, I keep it hype and real, I curse a little, I talk like I'm telling my friend not selling a product"
+          rows={3}
+          style={FIELD_STYLES}
+          onFocus={(e) => (e.target.style.borderColor = '#7c6bff')}
+          onBlur={(e) => (e.target.style.borderColor = '#2e2e2e')}
+        />
+      </Field>
+
       <button
         type="submit"
         disabled={!canSubmit}
