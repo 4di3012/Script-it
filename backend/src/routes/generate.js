@@ -98,9 +98,11 @@ Rules:
 - Hook always has exactly 1 talking point — the single opening line that grabs attention
 - Intro, Body, and Close talking points are determined naturally by analyzing the reference script — do not force a set number
 - Let the reference script dictate how many talking points each section needs — if the reference has a long body with 4 beats, match that, if it has a short intro with 1 beat, match that
-- Every talking point must have a visual recommendation using ONLY these shot types: "Direct to camera" (talking head moments), "Product shot" (show the product), "B-roll — [general vibe]" (lifestyle/context, e.g. "B-roll — morning routine"), "Label shot" (close up of product label/ingredients), "Lifestyle shot — [general context]" (lifestyle relevant to the product)
-- Visual recommendations must be generic shot directions — never describe specific physical actions (no "closes eyes", "tucks hair", "lifts mug"), never direct facial expressions
-- Keep visuals to 5 words max
+- Every talking point must have a visual recommendation using the format: [Shot type] — [brief context]
+- Shot types and how to use them: "Direct to camera — [emotional tone]" (e.g. "Direct to camera — enthusiastic", "Direct to camera — confessional", "Direct to camera — urgent"); "Product shot — [aspect]" (e.g. "Product shot — in hand", "Product shot — label", "Product shot — packaging"); "B-roll — [scene context]" (e.g. "B-roll — morning routine", "B-roll — at desk", "B-roll — kitchen counter"); "Lifestyle shot — [setting]" (e.g. "Lifestyle shot — morning at home", "Lifestyle shot — getting ready")
+- Never describe specific physical actions or facial expressions
+- Vary shot types throughout — never repeat "Direct to camera" more than twice in a row
+- Match the shot type to the energy of the talking point
 - Talking points are the actual words the creator says, natural and conversational
 - Never force content into a section just to fill it — if the script flows naturally from hook straight into body, the intro can have just 1 talking point`;
 }
