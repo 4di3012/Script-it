@@ -169,62 +169,65 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
           </div>
         )}
 
-        {(script || isLoading) && !error && (
-          parsedScript ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-              {SECTIONS.map(({ key, label, color }) => {
-                const items = parsedScript[key];
-                if (!items?.length) return null;
-                return (
-                  <div key={key}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                      <div style={{ width: '3px', height: '16px', background: color, borderRadius: '2px' }} />
-                      <span style={{ fontSize: '11px', fontWeight: '700', color, letterSpacing: '0.1em' }}>{label}</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {items.map((item, i) => (
-                        <div key={i} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px' }}>
-                          <p style={{ fontSize: '15px', color: '#f0f0f0', lineHeight: '1.65', margin: '0 0 10px 0' }}>{item.talking_point}</p>
-                          <div style={{ height: '1px', background: '#2a2a2a', margin: '0 0 10px 0' }} />
-                          <p style={{ fontSize: '12px', color: '#888', margin: 0, lineHeight: '1.5' }}>
-                            <span style={{ color: '#7c6bff', fontWeight: '600' }}>📷 Visual: </span>
-                            <em>{item.visual}</em>
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <pre
+        {isLoading && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#888', fontSize: '14px' }}>
+            <span
               style={{
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-                fontFamily: 'inherit',
-                fontSize: '14px',
-                lineHeight: '1.8',
-                color: '#e8e8e8',
-                margin: 0,
+                display: 'inline-block',
+                width: '2px',
+                height: '16px',
+                background: '#7c6bff',
+                verticalAlign: 'text-bottom',
+                animation: 'blink 0.8s step-end infinite',
               }}
-            >
-              {script}
-              {isLoading && (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    width: '2px',
-                    height: '16px',
-                    background: '#7c6bff',
-                    marginLeft: '2px',
-                    verticalAlign: 'text-bottom',
-                    animation: 'blink 0.8s step-end infinite',
-                  }}
-                />
-              )}
-            </pre>
-          )
+            />
+            Generating your script...
+          </div>
+        )}
+
+        {!isLoading && !error && parsedScript && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            {SECTIONS.map(({ key, label, color }) => {
+              const items = parsedScript[key];
+              if (!items?.length) return null;
+              return (
+                <div key={key}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                    <div style={{ width: '3px', height: '16px', background: color, borderRadius: '2px' }} />
+                    <span style={{ fontSize: '11px', fontWeight: '700', color, letterSpacing: '0.1em' }}>{label}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {items.map((item, i) => (
+                      <div key={i} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px' }}>
+                        <p style={{ fontSize: '15px', color: '#f0f0f0', lineHeight: '1.65', margin: '0 0 10px 0' }}>{item.talking_point}</p>
+                        <div style={{ height: '1px', background: '#2a2a2a', margin: '0 0 10px 0' }} />
+                        <p style={{ fontSize: '12px', color: '#888', margin: 0, lineHeight: '1.5' }}>
+                          <span style={{ color: '#7c6bff', fontWeight: '600' }}>📷 Visual: </span>
+                          <em>{item.visual}</em>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {!isLoading && !error && !parsedScript && script && (
+          <pre
+            style={{
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              fontFamily: 'inherit',
+              fontSize: '14px',
+              lineHeight: '1.8',
+              color: '#e8e8e8',
+              margin: 0,
+            }}
+          >
+            {script}
+          </pre>
         )}
       </div>
 
