@@ -164,7 +164,7 @@ export default function App() {
           <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#ccc', marginBottom: '20px' }}>
             Output
           </h2>
-          <OutputPanel script={script} isLoading={isLoading} error={error} />
+          <OutputPanel script={script} isLoading={isLoading} error={error} creatorVoice={values.creatorVoice} />
         </div>
       </main>
 

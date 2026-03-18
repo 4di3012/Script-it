@@ -1,7 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function OutputPanel({ script, isLoading, error }) {
+export default function OutputPanel({ script, isLoading, error, creatorVoice }) {
   const [copied, setCopied] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hovered, setHovered] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => { setRating(0); setSubmitted(false); }, [script]);
+
+  const handleRating = async (stars) => {
+    setRating(stars);
+    setSubmitted(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scriptId: Date.now(), rating: stars, script, creatorVoice }),
+      });
+    } catch { /* silent fail */ }
+  };
 
   const handleCopy = async () => {
     try {
@@ -140,6 +157,46 @@ export default function OutputPanel({ script, isLoading, error }) {
           </pre>
         )}
       </div>
+
+      {script && !isLoading && (
+        <div
+          style={{
+            borderTop: '1px solid #2e2e2e',
+            padding: '14px 24px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <span style={{ fontSize: '12px', color: '#888' }}>How human does this sound?</span>
+          {submitted ? (
+            <span style={{ fontSize: '12px', color: '#4ade80' }}>
+              Thanks! We'll use this to improve future scripts.
+            </span>
+          ) : (
+            [1, 2, 3, 4, 5].map((s) => (
+              <button
+                key={s}
+                onClick={() => handleRating(s)}
+                onMouseEnter={() => setHovered(s)}
+                onMouseLeave={() => setHovered(0)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '22px',
+                  color: s <= (hovered || rating) ? '#f59e0b' : '#3a3a3a',
+                  transition: 'color 0.1s',
+                  padding: '0 2px',
+                }}
+              >
+                ★
+              </button>
+            ))
+          )}
+        </div>
+      )}
 
       <style>{`
         @keyframes blink {

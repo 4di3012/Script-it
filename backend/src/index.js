@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import generateRoute from './routes/generate.js';
 import transcribeRoute from './routes/transcribe.js';
+import feedbackRoute from './routes/feedback.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', generateRoute);
 app.use('/api', transcribeRoute);
+app.use('/api', feedbackRoute);
 
 app.listen(PORT, () => {
   console.log(`Script It backend running on http://localhost:${PORT}`);
