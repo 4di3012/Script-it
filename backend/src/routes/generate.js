@@ -98,11 +98,15 @@ Rules:
 - Hook always has exactly 1 talking point — the single opening line that grabs attention
 - Intro, Body, and Close talking points are determined naturally by analyzing the reference script — do not force a set number
 - Let the reference script dictate how many talking points each section needs — if the reference has a long body with 4 beats, match that, if it has a short intro with 1 beat, match that
-- Every talking point must have a visual recommendation using the format: [Shot type] — [brief context]
-- Shot types and how to use them: "Direct to camera — [emotional tone]" (e.g. "Direct to camera — enthusiastic", "Direct to camera — confessional", "Direct to camera — urgent"); "Product shot — [aspect]" (e.g. "Product shot — in hand", "Product shot — label", "Product shot — packaging"); "B-roll — [scene context]" (e.g. "B-roll — morning routine", "B-roll — at desk", "B-roll — kitchen counter"); "Lifestyle shot — [setting]" (e.g. "Lifestyle shot — morning at home", "Lifestyle shot — getting ready")
-- Never describe specific physical actions or facial expressions
-- Vary shot types throughout — never repeat "Direct to camera" more than twice in a row
-- Match the shot type to the energy of the talking point
+- Every talking point must have a visual recommendation written like a professional shot list from a media buyer or creative director
+- Read each talking point and identify its emotional beat — is it a pattern interrupt, a confession, a benefit reveal, a proof moment, a CTA? Write a visual that supports that emotional beat
+- The visual does not have to be 1:1 with what is being said — it should complement and enhance the moment
+- Think about flow — visuals should feel like they belong in sequence with each other, like a shot list a video editor would follow
+- Use specific but achievable descriptions — a real creator with a phone and decent lighting should be able to execute this
+- Never direct specific facial expressions or physical actions like "closes eyes" or "tucks hair"
+- Vary shots throughout — mix direct to camera, b-roll, product shots, and lifestyle shots in a way that creates visual rhythm
+- Each visual should be 1-2 sentences max
+- Examples of good visuals: "Tight direct to camera — creator fills the frame, speaking directly into the lens like they're telling a secret to a friend"; "B-roll — hands wrapped around a warm mug on a clean kitchen counter, soft morning light coming through a window behind it"; "Product shot — canister or bag centered on a neutral surface, label facing camera, natural light hitting it cleanly"; "Lifestyle B-roll — creator at a desk or table, looking focused and settled, drink visible nearby — conveys the calm energy of the product"; "Direct to camera — creator leans slightly forward as they deliver the CTA, relaxed confidence, not salesy"
 - Talking points are the actual words the creator says, natural and conversational
 - Never force content into a section just to fill it — if the script flows naturally from hook straight into body, the intro can have just 1 talking point`;
 }
