@@ -10,7 +10,7 @@ function getSupabase() {
 }
 
 router.post('/feedback', async (req, res) => {
-  const { scriptId, rating, script, creatorVoice, feedbackNote } = req.body;
+  const { scriptId, rating, script, creatorVoice, feedbackNote, additionalFeedback } = req.body;
 
   if (!rating || !script) {
     return res.status(400).json({ error: 'rating and script are required.' });
@@ -22,6 +22,7 @@ router.post('/feedback', async (req, res) => {
     script,
     creator_voice: creatorVoice || null,
     feedback_note: feedbackNote || null,
+    additional_feedback: additionalFeedback || null,
   });
 
   if (error) {

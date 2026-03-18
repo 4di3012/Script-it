@@ -6,8 +6,11 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
   const [hovered, setHovered] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [feedbackNote, setFeedbackNote] = useState('');
+  const [showAdditionalFeedback, setShowAdditionalFeedback] = useState(false);
+  const [additionalFeedback, setAdditionalFeedback] = useState('');
+  const [additionalSubmitted, setAdditionalSubmitted] = useState(false);
 
-  useEffect(() => { setRating(0); setSubmitted(false); setFeedbackNote(''); }, [script]);
+  useEffect(() => { setRating(0); setSubmitted(false); setFeedbackNote(''); setShowAdditionalFeedback(false); setAdditionalFeedback(''); setAdditionalSubmitted(false); }, [script]);
 
   const handleRating = async (stars) => {
     setRating(stars);
@@ -21,6 +24,17 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
         });
       } catch { /* silent fail */ }
     }
+  };
+
+  const handleSubmitAdditional = async () => {
+    setAdditionalSubmitted(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scriptId: Date.now(), rating, script, creatorVoice, additionalFeedback }),
+      });
+    } catch { /* silent fail */ }
   };
 
   const handleSubmitNote = async () => {
@@ -183,11 +197,68 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
             flexWrap: 'wrap',
           }}
         >
-          <span style={{ fontSize: '12px', color: '#888' }}>How human does this sound?</span>
+          <span style={{ fontSize: '12px', color: '#888' }}>How did this script perform?</span>
           {submitted ? (
-            <span style={{ fontSize: '12px', color: '#4ade80' }}>
-              Thanks! We'll use this to improve future scripts.
-            </span>
+            <>
+              <span style={{ fontSize: '12px', color: '#4ade80' }}>
+                Thanks! We'll use this to improve future scripts.
+              </span>
+              {!showAdditionalFeedback && !additionalSubmitted && (
+                <button
+                  onClick={() => setShowAdditionalFeedback(true)}
+                  style={{
+                    padding: '4px 12px',
+                    background: 'none',
+                    color: '#888',
+                    border: '1px solid #3a3a3a',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Add More Feedback
+                </button>
+              )}
+              {showAdditionalFeedback && !additionalSubmitted && (
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <textarea
+                    value={additionalFeedback}
+                    onChange={(e) => setAdditionalFeedback(e.target.value)}
+                    placeholder="How did it perform? Views, engagement, conversions, what worked, what didn't..."
+                    rows={3}
+                    style={{
+                      background: '#0f0f0f',
+                      border: '1px solid #2e2e2e',
+                      borderRadius: '6px',
+                      color: '#f0f0f0',
+                      padding: '8px 10px',
+                      fontSize: '12px',
+                      resize: 'vertical',
+                      lineHeight: '1.6',
+                    }}
+                  />
+                  <button
+                    onClick={handleSubmitAdditional}
+                    style={{
+                      alignSelf: 'flex-end',
+                      padding: '8px 14px',
+                      background: '#7c6bff',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              )}
+              {additionalSubmitted && (
+                <span style={{ fontSize: '12px', color: '#666' }}>Feedback saved.</span>
+              )}
+            </>
           ) : (
             [1, 2, 3, 4, 5].map((s) => (
               <button
