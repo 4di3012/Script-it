@@ -69,6 +69,18 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
 
   const isEmpty = !script && !isLoading && !error;
 
+  let parsedScript = null;
+  if (script && !isLoading) {
+    try { parsedScript = JSON.parse(script); } catch { /* fall through to plain text */ }
+  }
+
+  const SECTIONS = [
+    { key: 'hook',  label: 'HOOK',  color: '#f59e0b' },
+    { key: 'intro', label: 'INTRO', color: '#7c6bff' },
+    { key: 'body',  label: 'BODY',  color: '#3b82f6' },
+    { key: 'close', label: 'CLOSE', color: '#4ade80' },
+  ];
+
   return (
     <div
       style={{
@@ -158,32 +170,61 @@ export default function OutputPanel({ script, isLoading, error, creatorVoice }) 
         )}
 
         {(script || isLoading) && !error && (
-          <pre
-            style={{
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              fontFamily: 'inherit',
-              fontSize: '14px',
-              lineHeight: '1.8',
-              color: '#e8e8e8',
-              margin: 0,
-            }}
-          >
-            {script}
-            {isLoading && (
-              <span
-                style={{
-                  display: 'inline-block',
-                  width: '2px',
-                  height: '16px',
-                  background: '#7c6bff',
-                  marginLeft: '2px',
-                  verticalAlign: 'text-bottom',
-                  animation: 'blink 0.8s step-end infinite',
-                }}
-              />
-            )}
-          </pre>
+          parsedScript ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+              {SECTIONS.map(({ key, label, color }) => {
+                const items = parsedScript[key];
+                if (!items?.length) return null;
+                return (
+                  <div key={key}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                      <div style={{ width: '3px', height: '16px', background: color, borderRadius: '2px' }} />
+                      <span style={{ fontSize: '11px', fontWeight: '700', color, letterSpacing: '0.1em' }}>{label}</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {items.map((item, i) => (
+                        <div key={i} style={{ background: '#111', border: '1px solid #2a2a2a', borderRadius: '8px', padding: '14px 16px' }}>
+                          <p style={{ fontSize: '15px', color: '#f0f0f0', lineHeight: '1.65', margin: '0 0 10px 0' }}>{item.talking_point}</p>
+                          <div style={{ height: '1px', background: '#2a2a2a', margin: '0 0 10px 0' }} />
+                          <p style={{ fontSize: '12px', color: '#888', margin: 0, lineHeight: '1.5' }}>
+                            <span style={{ color: '#7c6bff', fontWeight: '600' }}>📷 Visual: </span>
+                            <em>{item.visual}</em>
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <pre
+              style={{
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                fontFamily: 'inherit',
+                fontSize: '14px',
+                lineHeight: '1.8',
+                color: '#e8e8e8',
+                margin: 0,
+              }}
+            >
+              {script}
+              {isLoading && (
+                <span
+                  style={{
+                    display: 'inline-block',
+                    width: '2px',
+                    height: '16px',
+                    background: '#7c6bff',
+                    marginLeft: '2px',
+                    verticalAlign: 'text-bottom',
+                    animation: 'blink 0.8s step-end infinite',
+                  }}
+                />
+              )}
+            </pre>
+          )
         )}
       </div>
 
